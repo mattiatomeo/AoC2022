@@ -37,6 +37,20 @@ fn step_1() -> i32 {
     max_calories(&calories_per_elves)
 }
 
+fn sum_max_three_calories(calories_per_elves: &Vec<i32>) -> i32 {
+    calories_per_elves.iter().rev().take(3).sum()
+}
+
+fn step_2() -> i32 {
+    let step_1_input = read_input("step_1.txt");
+    let mut calories_per_elves = calculate_calories_per_elves(&step_1_input);
+    calories_per_elves.sort();
+
+    sum_max_three_calories(&calories_per_elves)
+}
+
 fn main() {
     assert_eq!(step_1(), 69912);
+
+    assert_eq!(step_2(), 208180);
 }
