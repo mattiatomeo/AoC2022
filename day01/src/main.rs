@@ -24,12 +24,15 @@ fn max_calories(calories_per_elves: &Vec<i32>) -> i32 {
     *calories_per_elves.iter().max().expect("Something goes wrong")
 }
 
+fn calculate_calories_per_elves(elves_calories_records: &String) -> Vec<i32> {
+    let elves_meals = split_meals_by_elves(&elves_calories_records);
+
+    calculate_total_calories_per_elves(&elves_meals)
+}
+
 fn step_1() -> i32 {
     let step_1_input = read_input("step_1.txt");
-
-    let elves_meals = split_meals_by_elves(&step_1_input);
-
-    let calories_per_elves = calculate_total_calories_per_elves(&elves_meals);
+    let calories_per_elves = calculate_calories_per_elves(&step_1_input);
 
     max_calories(&calories_per_elves)
 }
