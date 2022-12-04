@@ -63,7 +63,7 @@ fn find_common_item_in_backpacks(backpacks: &[String]) -> char {
     }
 
     if intersection.len() > 1 {
-        panic!("I expect only an element in common between the two halfs");
+        panic!("I expect only an element in common in a single group");
     }
 
     intersection.iter().next().unwrap().clone()
