@@ -31,8 +31,8 @@ fn calculate_calories_per_elves(elves_calories_records: &String) -> Vec<i32> {
 }
 
 fn step_1() -> i32 {
-    let step_1_input = read_input("step_1.txt");
-    let calories_per_elves = calculate_calories_per_elves(&step_1_input);
+    let calories_records = read_input("input.txt");
+    let calories_per_elves = calculate_calories_per_elves(&calories_records);
 
     max_calories(&calories_per_elves)
 }
@@ -42,8 +42,8 @@ fn sum_max_three_calories(calories_per_elves: &Vec<i32>) -> i32 {
 }
 
 fn step_2() -> i32 {
-    let step_1_input = read_input("step_1.txt");
-    let mut calories_per_elves = calculate_calories_per_elves(&step_1_input);
+    let calories_records = read_input("input.txt");
+    let mut calories_per_elves = calculate_calories_per_elves(&calories_records);
     calories_per_elves.sort();
 
     sum_max_three_calories(&calories_per_elves)
