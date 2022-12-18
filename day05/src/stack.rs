@@ -12,10 +12,14 @@ impl CharStack {
         self.data.push(character);
     }
 
-    pub fn pop(&mut self, character: char) -> char {
+    pub fn pop(&mut self) -> char {
         match self.data.pop() {
             Some(value) => value,
             None => panic!("You called pop on an empty stack!")
         }
+    }
+
+    pub fn top(&self) -> char {
+        self.data[self.data.len() - 1]
     }
 }
