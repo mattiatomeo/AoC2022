@@ -97,7 +97,6 @@ impl FileSystemDiscoverer {
             directory.subdirectories.push(String::from(row_from_ls.split(' ').next_back().unwrap()));
         } else {
             let file_definition: Vec<&str> = row_from_ls.split(' ').collect();
-            // println!("{}", row_from_ls);
             directory.files.push(File { name: String::from(file_definition[1]), size: file_definition[0].parse::<u64>().unwrap() })
         }
     }
@@ -110,6 +109,24 @@ impl FileSystemDiscoverer {
     }
 
     fn change_current_folder(&mut self, new_current_folder: String) {
+        match self.directories.get_mut(&self.current_directory) {
+            Some(directory) => {
+                if ! directory.subdirectories.contains(&new_current_folder) {
+                    directory.subdirectories.push(new_current_folder.clone());
+                }
+            },
+            None => {
+                if self.current_directory != "" {
+                    self.directories.insert(self.current_directory.clone(),Directory {
+                        name: self.current_directory.clone(),
+                        subdirectories: Vec::from_iter(vec![new_current_folder.clone()]),
+                        files: Vec::new(),
+                    });
+                }
+                ()
+            }
+        }
+
         self.directory_traversal_history.push(new_current_folder.clone());
         self.current_directory = String::from(new_current_folder.clone());
     }
@@ -121,7 +138,7 @@ impl FileSystemDiscoverer {
 
     fn get_parent(&mut self) -> String {
         match self.directory_traversal_history.pop() {
-            Some(parent) => parent,
+            Some(_) => self.directory_traversal_history.iter().next_back().unwrap().clone(),
             None => panic!("You are at the top of the hierachy"),
         }
     }
