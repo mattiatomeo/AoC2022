@@ -1,13 +1,14 @@
-
-mod command;
-mod filesystem;
-
-use std::collections::HashMap;
-use regex::Regex;
-
 use command::CommandExecution;
 
 
+mod command;
+mod history_parser;
+
+
+fn step_1(history: &Vec<CommandExecution>) -> i64 {
+    0
+}
+
 fn main() {
-    println!("{:#?}", command::read_history("input.txt"));
+    println!("{:#?}", history_parser::infer_filesystem_from_history("input_test.txt"));
 }
