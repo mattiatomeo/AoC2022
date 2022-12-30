@@ -57,7 +57,19 @@ fn step_1(filesystem: &HashMap<String, Directory>) -> u64 {
         .sum()
 }
 
+fn step_2(filesystem: &HashMap<String, Directory>) -> u64 {
+    let disk_size: u64 = 70000000;
+    let update_required_size: u64 = 30000000;
+
+    let dir_sizes = DirectorySizeCalculator::new(filesystem).get_directories_size();
+
+    let root_size = *dir_sizes.get("/").unwrap();
+    let size_to_free = update_required_size - (disk_size - root_size);
+
+    *dir_sizes.values().filter(|&&dir_size| dir_size > size_to_free).min().unwrap()
+}
 fn main() {
     let filesystem = history_parser::infer_filesystem_from_history("input.txt");
     assert_eq!(step_1(&filesystem), 1989474);
+    assert_eq!(step_2(&filesystem), 1111607);
 }
