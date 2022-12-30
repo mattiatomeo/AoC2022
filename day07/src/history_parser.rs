@@ -94,7 +94,8 @@ impl FileSystemDiscoverer {
 
     fn update_directory_with_new_entry(directory: &mut Directory, row_from_ls: &String) {
         if row_from_ls.starts_with("dir") {
-            let subdir = format!("{}/{}", directory.name, String::from(row_from_ls.split(' ').next_back().unwrap()));
+            let child_name = String::from(row_from_ls.split(' ').next_back().unwrap());
+            let subdir = FileSystemDiscoverer::add_child_to_path(&directory.name, &child_name);
             directory.subdirectories.push(subdir);
         } else {
             let file_definition: Vec<&str> = row_from_ls.split(' ').collect();
@@ -110,10 +111,21 @@ impl FileSystemDiscoverer {
     }
 
     fn change_current_folder(&mut self, new_current_folder: String) {
-        let new_current_folder_id = format!("{}/{}", self.current_directory, new_current_folder);
+        let new_current_folder_id = FileSystemDiscoverer::add_child_to_path(&self.current_directory, &new_current_folder);
 
         self.directory_traversal_history.push(new_current_folder_id.clone());
         self.current_directory = String::from(new_current_folder_id.clone());
+    }
+
+    fn add_child_to_path(path: &String, child: &String) -> String {
+        let sep;
+        if path == "/" || child == "/" {
+            sep = "";
+        } else {
+            sep = "/";
+        }
+
+        format!("{}{}{}", path, sep, child)
     }
 
     fn go_back_to_parent(&mut self) {
