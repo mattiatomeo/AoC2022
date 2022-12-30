@@ -38,6 +38,6 @@ fn step_1(filesystem: &HashMap<String, Directory>) -> u64 {
 }
 
 fn main() {
-    let filesystem = history_parser::infer_filesystem_from_history("input_test.txt");
-    println!("{:#?}", step_1(&filesystem));
+    let filesystem = history_parser::infer_filesystem_from_history("input.txt");
+    assert_eq!(step_1(&filesystem), 1989474);
 }
