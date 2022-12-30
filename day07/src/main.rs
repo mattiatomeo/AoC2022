@@ -4,36 +4,56 @@ mod history_parser;
 
 use history_parser::Directory;
 
+struct DirectorySizeCalculator {
+    filesystem: HashMap<String, Directory>,
+    directory_size: HashMap<String, u64>,
+}
 
-fn get_directory_size_if_under_threshold(filesystem: &HashMap<String, Directory>, directory: &Directory, threshold: u64) -> Option<u64> {
-    let mut dir_size = directory.files.iter().map(|file| file.size).sum::<u64>();
-
-    if dir_size > threshold {
-        return None;
+impl DirectorySizeCalculator {
+    fn new(filesystem: &HashMap<String, Directory>) -> DirectorySizeCalculator {
+        DirectorySizeCalculator { filesystem: filesystem.clone(), directory_size: HashMap::new() }
     }
 
-    for subdir in &directory.subdirectories {
-        let subdir_obj = filesystem.get(subdir).unwrap();
-        match get_directory_size_if_under_threshold(filesystem, subdir_obj, threshold) {
-            Some(subdir_size) => dir_size += subdir_size,
-            None => return None
-        }
+    fn get_directories_size(&mut self) -> HashMap<String, u64> {
+        self.calculate_directories_sizes();
 
-        if dir_size > threshold {
-            return None;
-        }
+        self.directory_size.clone()
     }
 
-    Some(dir_size)
+    fn calculate_directories_sizes(&mut self) {
+        let mut directory_sizes: HashMap<String, u64> = HashMap::new();
+        self.filesystem.values().for_each(|subdir| {
+            self.calculate_directory_size_for_dir(subdir, &mut directory_sizes);
+        });
+
+        self.directory_size = directory_sizes;
+    }
+
+    fn calculate_directory_size_for_dir(&self, directory: &Directory, directory_size_cache: &mut HashMap<String, u64>) -> u64 {
+        let mut dir_size = directory.files.iter().map(|file| file.size).sum::<u64>();
+
+        for subdir in &directory.subdirectories {
+            let subdir_obj = self.filesystem.get(subdir).unwrap();
+            let subdir_size = match directory_size_cache.get(subdir) {
+                Some(size) => *size,
+                None => self.calculate_directory_size_for_dir(subdir_obj, directory_size_cache)
+            };
+
+            dir_size += subdir_size;
+        }
+
+        directory_size_cache.insert(directory.name.clone(), dir_size);
+
+        dir_size
+    }
 }
 
 fn step_1(filesystem: &HashMap<String, Directory>) -> u64 {
-    let threshold = 100000;
+    let threshold: u64 = 100000;
 
-    filesystem.values()
-        .map(|directory| get_directory_size_if_under_threshold(filesystem, directory, threshold))
-        .filter(Option::is_some)
-        .map(Option::unwrap)
+    let mut dir_size_calculator = DirectorySizeCalculator::new(filesystem);
+    dir_size_calculator.get_directories_size().values()
+        .filter(|&&dir_size| dir_size <= threshold)
         .sum()
 }
 
