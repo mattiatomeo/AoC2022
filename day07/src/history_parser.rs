@@ -112,24 +112,6 @@ impl FileSystemDiscoverer {
     fn change_current_folder(&mut self, new_current_folder: String) {
         let new_current_folder_id = format!("{}/{}", self.current_directory, new_current_folder);
 
-        match self.directories.get_mut(&self.current_directory) {
-            Some(directory) => {
-                if ! directory.subdirectories.contains(&new_current_folder_id) {
-                    directory.subdirectories.push(new_current_folder_id.clone());
-                }
-            },
-            None => {
-                if self.current_directory != "" {
-                    self.directories.insert(new_current_folder_id.clone(),Directory {
-                        name: self.current_directory.clone(),
-                        subdirectories: Vec::from_iter(vec![new_current_folder_id.clone()]),
-                        files: Vec::new(),
-                    });
-                }
-                ()
-            }
-        }
-
         self.directory_traversal_history.push(new_current_folder_id.clone());
         self.current_directory = String::from(new_current_folder_id.clone());
     }
