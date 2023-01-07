@@ -34,17 +34,12 @@ fn read_input(filename: &str) -> Vec<Movement> {
         }).collect()
 }
 
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone)]
 struct Point {
     pub x: i32,
     pub y: i32,
 }
 
-impl Hash for Point {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        format!("{}{}", self.x, self.y).hash(state);
-    }
-}
 
 struct Rope {
     head: Point,
