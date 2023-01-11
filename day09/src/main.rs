@@ -116,13 +116,13 @@ impl KnotsRope {
 
         if different_row && different_col {
             tail.x += 1 * x_direction;
-            tail.y += 1 * y_direction as i32;
+            tail.y += 1 * y_direction;
             return true;
         } else if different_row {
-            tail.x += 1 * x_direction as i32;
+            tail.x += 1 * x_direction;
             return true;
         } else if different_col {
-            tail.y += 1 * y_direction as i32;
+            tail.y += 1 * y_direction;
             return true;
         }
 
@@ -160,8 +160,8 @@ impl KnotsRope {
         x_dist <= 1 && y_dist <= 1
     }
 
-    fn get_position_traversed_by_tail(&self) -> HashSet<Point> {
-        self.trail_history.clone()
+    fn get_position_traversed_by_tail(&self) -> usize {
+        self.trail_history.len()
     }
 }
 
@@ -169,14 +169,14 @@ fn step_1(input: &Vec<Movement>) -> u32 {
     let mut rope = KnotsRope::new(2);
     rope.move_head(input);
 
-    rope.get_position_traversed_by_tail().len() as u32
+    rope.get_position_traversed_by_tail() as u32
 }
 
 fn step_2(input: &Vec<Movement>) -> u32 {
     let mut rope = KnotsRope::new(10);
     rope.move_head(input);
 
-    rope.get_position_traversed_by_tail().len() as u32
+    rope.get_position_traversed_by_tail() as u32
 }
 
 fn main() {
