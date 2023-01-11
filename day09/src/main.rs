@@ -40,130 +40,14 @@ struct Point {
     pub y: i32,
 }
 
-
-struct TwoKnotsRope {
-    head: Point,
-    tail: Point,
-
-    trail_history: HashSet<Point>
-}
-
-impl TwoKnotsRope {
-    fn new() -> TwoKnotsRope {
-        TwoKnotsRope { head: Point { x: 0, y: 0 }, tail: Point { x: 0, y: 0 }, trail_history: HashSet::new() }
-    }
-
-    fn move_head(&mut self, head_movement: &Vec<Movement>) {
-        for movement in head_movement {
-            match movement.direction {
-                Direction::Left => {
-                    for _ in 0..movement.step {
-                        self.move_head_to_left();
-                        self.trail_history.insert(self.tail.clone());
-                    }
-                }
-                Direction::Right => {
-                    for _ in 0..movement.step {
-                        self.move_head_to_right();
-                        self.trail_history.insert(self.tail.clone());
-                    }
-                }
-                Direction::Top => {
-                    for _ in 0..movement.step {
-                        self.move_head_to_top();
-                        self.trail_history.insert(self.tail.clone());
-                    }
-                }
-                Direction::Bottom => {
-                    for _ in 0..movement.step {
-                        self.move_head_to_bottom();
-                        self.trail_history.insert(self.tail.clone());
-                    }
-                }
-            }
-        }
-    }
-
-    fn move_head_to_right(&mut self) {
-        self.head.y += 1;
-
-        if self.are_head_and_tail_adjacent() {
-            return
-        }
-
-        self.tail.y = self.head.y - 1;
-
-        if self.are_head_and_tail_in_different_row_and_col() {
-            self.tail.x = self.head.x;
-        }
-    }
-
-    fn move_head_to_left(&mut self) {
-        self.head.y -= 1;
-
-        if self.are_head_and_tail_adjacent() {
-            return
-        }
-
-        self.tail.y = self.head.y + 1;
-
-        if self.are_head_and_tail_in_different_row_and_col() {
-            self.tail.x = self.head.x;
-        }
-    }
-
-    fn move_head_to_top(&mut self) {
-        self.head.x += 1;
-
-        if self.are_head_and_tail_adjacent() {
-            return
-        }
-
-        self.tail.x = self.head.x - 1;
-
-        if self.are_head_and_tail_in_different_row_and_col() {
-            self.tail.y = self.head.y;
-        }
-    }
-
-    fn move_head_to_bottom(&mut self) {
-        self.head.x -= 1;
-
-        if self.are_head_and_tail_adjacent() {
-            return
-        }
-
-        self.tail.x = self.head.x + 1;
-
-        if self.are_head_and_tail_in_different_row_and_col() {
-            self.tail.y = self.head.y;
-        }
-    }
-
-    fn are_head_and_tail_adjacent(&self) -> bool {
-        let x_dist = self.head.x.abs_diff(self.tail.x);
-        let y_dist = self.head.y.abs_diff(self.tail.y);
-
-        x_dist <= 1 && y_dist <= 1
-    }
-
-    fn are_head_and_tail_in_different_row_and_col(&self) -> bool {
-        self.head.x != self.tail.x && self.head.y != self.tail.y
-    }
-
-    fn get_position_traversed_by_tail(&self) -> HashSet<Point> {
-        self.trail_history.clone()
-    }
-}
-
-struct TenKnotsRope {
+struct KnotsRope {
     knots: Vec<Point>,
     trail_history: HashSet<Point>
 }
 
-impl TenKnotsRope {
-    fn new() -> TenKnotsRope {
-        TenKnotsRope { knots: (0..10).map(|_| Point { x: 0, y: 0 }).collect(), trail_history: HashSet::new() }
+impl KnotsRope {
+    fn new(num_knots: u32) -> KnotsRope {
+        KnotsRope { knots: (0..num_knots).map(|_| Point { x: 0, y: 0 }).collect(), trail_history: HashSet::new() }
     }
 
     fn move_head(&mut self, head_movement: &Vec<Movement>) {
@@ -201,7 +85,7 @@ impl TenKnotsRope {
         self.knots[0].y += 1;
 
         for idx in 1..self.knots.len() {
-            let adjusted = TenKnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
+            let adjusted = KnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
             if !adjusted {
                 break;
             }
@@ -209,7 +93,7 @@ impl TenKnotsRope {
     }
 
     fn adjust_tail_if_not_adjacent(head: Point, tail: &mut Point) -> bool {
-        if TenKnotsRope::are_head_and_tail_adjacent(&head, tail) {
+        if KnotsRope::are_head_and_tail_adjacent(&head, tail) {
             return false;
         }
 
@@ -249,7 +133,7 @@ impl TenKnotsRope {
         self.knots[0].y -= 1;
 
         for idx in 1..self.knots.len() {
-            TenKnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
+            KnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
         }
     }
 
@@ -257,7 +141,7 @@ impl TenKnotsRope {
         self.knots[0].x += 1;
 
         for idx in 1..self.knots.len() {
-            TenKnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
+            KnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
         }
     }
 
@@ -265,7 +149,7 @@ impl TenKnotsRope {
         self.knots[0].x -= 1;
 
         for idx in 1..self.knots.len() {
-            TenKnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
+            KnotsRope::adjust_tail_if_not_adjacent(self.knots[idx - 1], &mut self.knots[idx]);
         }
     }
 
@@ -282,14 +166,14 @@ impl TenKnotsRope {
 }
 
 fn step_1(input: &Vec<Movement>) -> u32 {
-    let mut rope = TwoKnotsRope::new();
+    let mut rope = KnotsRope::new(2);
     rope.move_head(input);
 
     rope.get_position_traversed_by_tail().len() as u32
 }
 
 fn step_2(input: &Vec<Movement>) -> u32 {
-    let mut rope = TenKnotsRope::new();
+    let mut rope = KnotsRope::new(10);
     rope.move_head(input);
 
     rope.get_position_traversed_by_tail().len() as u32
